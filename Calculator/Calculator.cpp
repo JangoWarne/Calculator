@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include "myTypes.h"
 
 // functions
 float add_single(int num1, int num2);
@@ -14,12 +15,12 @@ float divide_single(int num1, int num2);
 // Main
 int main()
 {
-	bool continue(true);
+	char continue_str = 'Y';
+	char input_string[3];
 
-	while (continue == false)
+	while (continue_str == 'Y')
 	{
 		// take user input
-		char input_string[3];
 		std::cout << "Enter calculation:  ";
 		std::cin >> input_string;
 
@@ -32,14 +33,6 @@ int main()
 		num1 = atoi(&input_string[0]);
 		operand = input_string[1];
 		num2 = atoi(&input_string[2]);
-
-		std::cout << input_string[0] << std::endl;
-		std::cout << input_string[1] << std::endl;
-		std::cout << input_string[2] << std::endl;
-
-		std::cout << num1 << std::endl;
-		std::cout << operand << std::endl;
-		std::cout << num2 << std::endl;
 
 		// calculate result
 		float result;
@@ -78,7 +71,6 @@ int main()
 
 
 		// check if to continue
-		char continue_str;
 		std::cout << "Continue (Y/N):  ";
 		std::cin >> continue_str;
 	}
@@ -95,8 +87,10 @@ int main()
 float add_single(int num1, int num2)
 {
 	float result;
+	float float1 = num1;
+	float float2 = num2;
 
-	result = num1 + num2;
+	result = float1 + float2;
 
 	return result;
 }
@@ -105,8 +99,10 @@ float add_single(int num1, int num2)
 float subtract_single(int num1, int num2)
 {
 	float result;
+	float float1 = num1;
+	float float2 = num2;
 
-	result = num1 - num2;
+	result = float1 - float2;
 
 	return result;
 }
@@ -115,8 +111,10 @@ float subtract_single(int num1, int num2)
 float multiply_single(int num1, int num2)
 {
 	float result;
+	float float1 = num1;
+	float float2 = num2;
 
-	result = num1 * num2;
+	result = float1 * float2;
 
 	return result;
 }
