@@ -1,0 +1,8 @@
+﻿  Calculator.cpp
+n:\visual studio 2015\projects\calculator\calculator\calculator.cpp(86): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+n:\visual studio 2015\projects\calculator\calculator\calculator.cpp(96): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+n:\visual studio 2015\projects\calculator\calculator\calculator.cpp(106): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+n:\visual studio 2015\projects\calculator\calculator\calculator.cpp(115): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+n:\visual studio 2015\projects\calculator\calculator\calculator.cpp(116): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  Calculator.vcxproj -> n:\visual studio 2015\Projects\Calculator\Debug\Calculator.exe
+  Calculator.vcxproj -> n:\visual studio 2015\Projects\Calculator\Debug\Calculator.pdb (Full PDB)
