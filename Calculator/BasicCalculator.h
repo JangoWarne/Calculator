@@ -8,14 +8,16 @@ class BasicCalculator
 private:
 	// Types
 	struct calcParts {
-		double num1;
 		char op;
-		double num2;
+		double num;
+	};
+	struct partsOut {
+		std::vector<char> message;
+		std::stack<calcParts> infix;
 	};
 
 	// Global Values
-	calcParts operations[16];
-	std::stack<int> sequence;
+	std::stack<calcParts> postfix;
 	double answer;
 
 
@@ -28,10 +30,10 @@ public:
 
 	// Internal
 	void substitute(std::vector<char> &input_string);
-	std::vector<char> createParts(std::vector<char> input_string);
+	partsOut createParts(std::vector<char> input_string);
+	void postfixConvert(std::stack<calcParts> infix);
 	bool isOperator(char character);
-	void bidmasSort();
-	double calculateSingle(calcParts single);
+	double calculateSingle(double num1, char op, double num2);
 	std::vector<char> format(double num_value, myTypes::notation notate, int sig_fig);
 };
 
