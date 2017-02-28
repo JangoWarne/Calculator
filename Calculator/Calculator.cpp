@@ -74,9 +74,6 @@ int main()
 		std::cout << "Continue (Y/N):  ";
 		std::cin >> continue_str;
 	}
-	
-
-	system("PAUSE");
 
     return 0;
 }
