@@ -25,7 +25,7 @@ std::vector<char> BasicCalculator::Parse(const std::vector<char> user_input)
 
 	// split into parts
 	BasicCalculator::partsOut output;
-	output = createParts(input_string);
+	output = splitParts(input_string);
 
 	// Format into postfix and store in global
 	postfixConvert(output.infix);
@@ -79,14 +79,15 @@ void BasicCalculator::substitute(std::vector<char> &input_string)
 }
 
 
-BasicCalculator::partsOut BasicCalculator::createParts(std::vector<char> input_string)
+BasicCalculator::partsOut BasicCalculator::splitParts(std::vector<char> input_string)
 {
-	bool first = true;
-	std::stack<calcParts> infix;
-	BasicCalculator::calcParts part;
-	double dnum;
-	std::stringstream snum;
-	snum.precision(15);  // ensure precision when converting to double
+	bool first = true;					//first valid character?
+	std::stack<calcParts> infix;		//infix stack
+	BasicCalculator::calcParts part;	//part to go on stack
+	std::stringstream snum;				//characters of number being built
+	snum.precision(15);					//ensure precision when converting to double
+	double dnum;						//double complete number
+	std::stringstream message;			//error message
 	
 
 	// read char by char & check if first value is operator
@@ -155,31 +156,80 @@ BasicCalculator::partsOut BasicCalculator::createParts(std::vector<char> input_s
 				end = i + 5;
 			}
 
-			// select subset
-			std::vector<char> subset;
-
-			for (int x = start; x = end; x++) {
-				subset[x - start] = input_string[x];
-			}
-
 
 			// Output warning message
-			message << "Invalid input \"" << character << "\" in: " << subset;// change all strings to stringstreams
+			message << "Invalid input \"" << character << "\" in: ";
+
+
+			// add problem subset
+			for (int x = start; x = end; x++) {
+				message << input_string[x];
+			}
 
 			break;
 		}
 	}
 
+	// type cast error message
+	std::string messageString = message.str();
+	std::vector<char> messageVector(messageString.begin(), messageString.end());
+
 	// build output
 	BasicCalculator::partsOut output;
 	output.infix = infix;
-	output.message = message;
+	output.message = messageVector;
 
 	return output;
 }
 
 void BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 {
+	// create conversion stacks
+	std::stack<calcParts> numstack;
+	std::stack<calcParts> opstack;
+	BasicCalculator::calcParts part;	//part to go on stack
+	BasicCalculator::calcParts optop;	//part at top of operator stack
+
+
+	// convert infix to postfix notation
+	for (int i = 0; i < infix.size; i++) {
+		
+		// pop top element
+		part = infix.pop;
+
+		if (part.op = 'n') {	// if number
+			opstack.push = part;
+		}
+		else {	// if operator
+
+			// Until the new operator has a higher precedence than the value at the top of the stack
+			whileloop
+
+			// Find presedence
+			partImport = precedence(part.op);
+			optop = infix.top;
+			optopImport = precedence(optop.op);
+
+			// Compare precedence values
+			if (partImport.value > optopImport.value) {			// If new operator has a higher precedence
+
+			}
+			else if (partImport.value < optopImport.value) {	// If new operator has a lower precedence
+
+			}
+			else {												// If both operators have the same precedence value
+
+				// compare association
+				partImport.assoc etc
+			}
+		}
+	}
+
+
+	// output to postfix stack
+	for (int i = 0; i < numstack.size; i++) {
+		postfix.push = numstack.pop;
+	}
 
 	return;
 }
