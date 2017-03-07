@@ -182,45 +182,82 @@ BasicCalculator::partsOut BasicCalculator::splitParts(std::vector<char> input_st
 	return output;
 }
 
-void BasicCalculator::postfixConvert(std::stack<calcParts> infix)
+std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 {
 	// create conversion stacks
 	std::stack<calcParts> numstack;
 	std::stack<calcParts> opstack;
-	BasicCalculator::calcParts part;	//part to go on stack
-	BasicCalculator::calcParts optop;	//part at top of operator stack
+	BasicCalculator::calcParts opnew;	//new part to go on stack
+	BasicCalculator::calcParts optop;	//part on top of operator stack
+	bool correct;
+	std::vector<char> errorMessage;
 
 
 	// convert infix to postfix notation
 	for (int i = 0; i < infix.size; i++) {
 		
 		// pop top element
-		part = infix.pop;
+		opnew = infix.pop;
 
-		if (part.op = 'n') {	// if number
-			opstack.push = part;
+		if (opnew.op = 'n') {		// if new part is a number
+			opstack.push = opnew;
 		}
-		else {	// if operator
+		else {						// if new part is a operator
+			correct = false;
 
 			// Until the new operator has a higher precedence than the value at the top of the stack
-			whileloop
+			while (correct == false) {
 
-			// Find presedence
-			partImport = precedence(part.op);
-			optop = infix.top;
-			optopImport = precedence(optop.op);
+				// Find presedence
+				opnewImport = precedence(opnew.op);
+				optop = infix.top;
+				optopImport = precedence(optop.op);
 
-			// Compare precedence values
-			if (partImport.value > optopImport.value) {			// If new operator has a higher precedence
+				// Compare precedence values
+				if (opnewImport.value > optopImport.value) {		// If new operator has a higher precedence
 
-			}
-			else if (partImport.value < optopImport.value) {	// If new operator has a lower precedence
+					push to stack
 
-			}
-			else {												// If both operators have the same precedence value
+					correct = true;
+				}
+				else if (opnewImport.value < optopImport.value) {	// If new operator has a lower precedence
 
-				// compare association
-				partImport.assoc etc
+					pop and push
+				}
+				else {												// If both operators have the same precedence value
+
+					// compare association
+					if ((opnewImport.assoc == 'L') && (optopImport.assoc != 'R')) {
+						// If the new operator has left-associativity...
+						// and...
+						// If the operator ontop of the stack does not have right-associativity
+
+						pop and push
+					}
+					else if ((opnewImport.assoc == 'R') || (opnewImport.assoc == 'A')) {
+						// If the new operator has right-associativity...
+						// or...
+						// If the new operator is associative
+
+						push to stack
+
+						correct = true;
+					}
+					else if ((opnewImport.assoc == 'N') && (opnew.op != optop.op)) {
+						// If the new operator has non-associativity...
+						// and...
+						// If the operator ontop of the stack is not identicle
+
+						push to stack
+
+						correct = true;
+					}
+					else {
+						// Otherwise
+
+						error message
+					}
+				}
 			}
 		}
 	}

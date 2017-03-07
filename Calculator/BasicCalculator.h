@@ -31,7 +31,7 @@ public:
 	// Internal
 	void substitute(std::vector<char> &input_string);
 	partsOut splitParts(std::vector<char> input_string);
-	void postfixConvert(std::stack<calcParts> infix);
+	std::vector<char> postfixConvert(std::stack<calcParts> infix);
 	bool isOperator(char character);
 	double calculateSingle(double num1, char op, double num2);
 	std::vector<char> format(double num_value, myTypes::notation notate, int sig_fig);
