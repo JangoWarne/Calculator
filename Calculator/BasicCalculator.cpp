@@ -25,10 +25,16 @@ std::vector<char> BasicCalculator::Parse(const std::vector<char> user_input)
 
 	// split into parts
 	BasicCalculator::partsOut output;
+	std::vector<char> errorMessage;
+
 	output = splitParts(input_string);
 
-	// Format into postfix and store in global
-	postfixConvert(output.infix);
+	errorMessage = output.message;
+
+	if (!errorMessage.empty()) {
+		// Format into postfix and store in global
+		errorMessage = postfixConvert(output.infix);
+	}
 
 	return output.message;
 }
@@ -182,6 +188,7 @@ BasicCalculator::partsOut BasicCalculator::splitParts(std::vector<char> input_st
 	return output;
 }
 
+
 std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 {
 	// create conversion stacks
@@ -190,7 +197,7 @@ std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 	BasicCalculator::calcParts opnew;	//new part to go on stack
 	BasicCalculator::calcParts optop;	//part on top of operator stack
 	bool correct;
-	std::vector<char> errorMessage;
+	std::stringstream message;			//error message
 
 
 	// convert infix to postfix notation
@@ -200,7 +207,9 @@ std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 		opnew = infix.pop;
 
 		if (opnew.op = 'n') {		// if new part is a number
-			opstack.push = opnew;
+
+			// push number to number stack
+			numstack.push = opnew;
 		}
 		else {						// if new part is a operator
 			correct = false;
@@ -208,67 +217,90 @@ std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 			// Until the new operator has a higher precedence than the value at the top of the stack
 			while (correct == false) {
 
-				// Find presedence
-				opnewImport = precedence(opnew.op);
-				optop = infix.top;
-				optopImport = precedence(optop.op);
+				// Is operator stack empty?
+				if (opstack.empty()) {
 
-				// Compare precedence values
-				if (opnewImport.value > optopImport.value) {		// If new operator has a higher precedence
+					// push operator to operator stack
+					opstack.push = opnew;
 
-					push to stack
-
-					correct = true;
 				}
-				else if (opnewImport.value < optopImport.value) {	// If new operator has a lower precedence
+				else {
 
-					pop and push
-				}
-				else {												// If both operators have the same precedence value
+					// Find presedence
+					precedence opnewImport = calcPrecedence(opnew.op);
+					optop = infix.top;
+					precedence optopImport = calcPrecedence(optop.op);
 
-					// compare association
-					if ((opnewImport.assoc == 'L') && (optopImport.assoc != 'R')) {
-						// If the new operator has left-associativity...
-						// and...
-						// If the operator ontop of the stack does not have right-associativity
+					// Compare precedence values
+					if (opnewImport.value > optopImport.value) {		// If new operator has a higher precedence
 
-						pop and push
-					}
-					else if ((opnewImport.assoc == 'R') || (opnewImport.assoc == 'A')) {
-						// If the new operator has right-associativity...
-						// or...
-						// If the new operator is associative
+						// push operator to operator stack
+						opstack.push = opnew;
 
-						push to stack
-
+						// Step complete
 						correct = true;
 					}
-					else if ((opnewImport.assoc == 'N') && (opnew.op != optop.op)) {
-						// If the new operator has non-associativity...
-						// and...
-						// If the operator ontop of the stack is not identicle
+					else if (opnewImport.value < optopImport.value) {	// If new operator has a lower precedence
 
-						push to stack
-
-						correct = true;
+						// push top of operator stack to number stack
+						numstack.push = opstack.pop;
 					}
-					else {
-						// Otherwise
+					else {												// If both operators have the same precedence value
 
-						error message
+						// compare association
+						if ((opnewImport.assoc == 'L') && (optopImport.assoc != 'R')) {
+							// If the new operator has left-associativity...
+							// and...
+							// If the operator ontop of the stack does not have right-associativity
+
+							// push top of operator stack to number stack
+							numstack.push = opstack.pop;
+						}
+						else if ((opnewImport.assoc == 'R') || (opnewImport.assoc == 'A')) {
+							// If the new operator has right-associativity...
+							// or...
+							// If the new operator is associative
+
+							// push operator to operator stack
+							opstack.push = opnew;
+
+							// Step complete
+							correct = true;
+						}
+						else if ((opnewImport.assoc == 'N') && (opnew.op != optop.op)) {
+							// If the new operator has non-associativity...
+							// and...
+							// If the operator ontop of the stack is not identicle
+
+							// push operator to operator stack
+							opstack.push = opnew;
+
+							// Step complete
+							correct = true;
+						}
+						else {
+							// Otherwise
+
+							// Output warning message
+							message << "Invalid operator sequence. Operator: \"" << opnew.op << "\"";
+
+						}
 					}
 				}
 			}
 		}
 	}
-
+	
+	// type cast error message
+	std::string messageString = message.str();
+	std::vector<char> errorMessage(messageString.begin(), messageString.end());
 
 	// output to postfix stack
 	for (int i = 0; i < numstack.size; i++) {
 		postfix.push = numstack.pop;
 	}
 
-	return;
+	return errorMessage;
 }
 
 
@@ -290,6 +322,33 @@ bool BasicCalculator::isOperator(char character)
 	}
 
 	return valid;
+}
+
+
+BasicCalculator::precedence BasicCalculator::calcPrecedence(char op)
+{
+	precedence pres;
+
+	// check character
+	switch (op) {
+	case '/':
+		pres.value = 2;
+		pres.assoc = 'L';
+	case '*':
+		pres.value = 2;
+		pres.assoc = 'A';
+	case '+':
+		pres.value = 1;
+		pres.assoc = 'A';
+	case '-':
+		pres.value = 1;
+		pres.assoc = 'L';
+	default:
+		pres.value = 0;
+		pres.assoc = 'A';
+	}
+
+	return pres;
 }
 
 

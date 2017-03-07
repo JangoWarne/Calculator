@@ -15,6 +15,10 @@ private:
 		std::vector<char> message;
 		std::stack<calcParts> infix;
 	};
+	struct precedence {
+		int value;
+		char assoc;
+	};
 
 	// Global Values
 	std::stack<calcParts> postfix;
@@ -33,6 +37,7 @@ public:
 	partsOut splitParts(std::vector<char> input_string);
 	std::vector<char> postfixConvert(std::stack<calcParts> infix);
 	bool isOperator(char character);
+	precedence calcPrecedence(char op);
 	double calculateSingle(double num1, char op, double num2);
 	std::vector<char> format(double num_value, myTypes::notation notate, int sig_fig);
 };
