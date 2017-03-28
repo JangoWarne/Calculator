@@ -4,7 +4,7 @@
 
 namespace myTypes
 {
-	enum notation { Sci, Eng, Dec};
+	enum notation { Dec, Sci, Eng};
 };
 
 #endif

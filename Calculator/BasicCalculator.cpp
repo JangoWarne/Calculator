@@ -3,6 +3,7 @@
 #include <cctype>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 
 BasicCalculator::BasicCalculator()
@@ -15,17 +16,17 @@ BasicCalculator::~BasicCalculator()
 }
 
 
-std::vector<char> BasicCalculator::Parse(const std::vector<char> user_input)
+std::string BasicCalculator::Parse(const std::string user_input)
 {
 	// Copy user input
-	std::vector<char> input_string = user_input;
+	std::vector<char> input_string(user_input.begin(), user_input.end());
 
 	// Apply Substitutions to copy
 	substitute(input_string);
 
 	// split into parts
 	BasicCalculator::partsOut output;
-	std::vector<char> errorMessage;
+	std::string errorMessage;
 
 	output = splitParts(input_string);
 
@@ -40,24 +41,44 @@ std::vector<char> BasicCalculator::Parse(const std::vector<char> user_input)
 }
 
 
-std::vector<char> BasicCalculator::Result(myTypes::notation notate, int sig_fig)
+std::string BasicCalculator::Result(myTypes::notation notate, int sig_fig)
 {
-	std::stack<int> sequence; //change name & seporate calculation into rpn calculator
-	// Calculate Result using rpn
+	std::stack<calcParts> sequence = postfix;
+	std::stack<long double> numStack;
+	calcParts item;
+	long double num1;
+	long double num2;
+	long double result;
+
+	// Calculate Result using rpn and stacks
 	while (sequence.size > 0) {
-		// Seporate Next Operation
+		// read and pop next item
+		item = sequence.top;	sequence.pop;
 
+		// Is number?
+		if (item.op == 'n') {
 
-		// Calculate Result
+			// Push to number stack
+			numStack.push(item.num);
 
+		}
+		else {
+			
+			// Calculate Result
+			num2 = numStack.top;	numStack.pop;
+			num1 = numStack.top;	numStack.pop;
 
-		// Feed into Operations
+			result = calculateSingle(num1, item.op, num2);
 
+			// Push result to number stack
+			numStack.push(result);
+
+		}
 	}
-
+	
 	// Format Output
-	std::vector<char> output;
-	output = format(answer, notate, sig_fig);
+	std::string output;
+	output = format(numStack.top, notate, sig_fig);
 
 	return output;
 }
@@ -92,7 +113,7 @@ BasicCalculator::partsOut BasicCalculator::splitParts(std::vector<char> input_st
 	BasicCalculator::calcParts part;	//part to go on stack
 	std::stringstream snum;				//characters of number being built
 	snum.precision(15);					//ensure precision when converting to double
-	double dnum;						//double complete number
+	long double dnum;						//double complete number
 	std::stringstream message;			//error message
 	
 
@@ -126,7 +147,7 @@ BasicCalculator::partsOut BasicCalculator::splitParts(std::vector<char> input_st
 				first = false;
 			}
 			else {
-				snum >> dnum;  //convert number to double
+				snum >> dnum;  //convert number to long double
 			}
 			
 			// Push built number and operator to stack
@@ -178,18 +199,17 @@ BasicCalculator::partsOut BasicCalculator::splitParts(std::vector<char> input_st
 
 	// type cast error message
 	std::string messageString = message.str();
-	std::vector<char> messageVector(messageString.begin(), messageString.end());
 
 	// build output
 	BasicCalculator::partsOut output;
 	output.infix = infix;
-	output.message = messageVector;
+	output.message = messageString;
 
 	return output;
 }
 
 
-std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
+std::string BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 {
 	// create conversion stacks
 	std::stack<calcParts> numstack;
@@ -292,8 +312,7 @@ std::vector<char> BasicCalculator::postfixConvert(std::stack<calcParts> infix)
 	}
 	
 	// type cast error message
-	std::string messageString = message.str();
-	std::vector<char> errorMessage(messageString.begin(), messageString.end());
+	std::string errorMessage = message.str();
 
 	// output to postfix stack
 	for (int i = 0; i < numstack.size; i++) {
@@ -352,9 +371,9 @@ BasicCalculator::precedence BasicCalculator::calcPrecedence(char op)
 }
 
 
-double BasicCalculator::calculateSingle(double num1, char op, double num2)
+long double BasicCalculator::calculateSingle(long double num1, char op, long double num2)
 {
-	double result;
+	long double result;
 
 	// Calculate based on operator
 	switch(op) {
@@ -371,19 +390,95 @@ double BasicCalculator::calculateSingle(double num1, char op, double num2)
 			result = num1 - num2;
 			break;
 		default : // error
-			
+			result = 0;
 	}
 	return result;
 }
 
 
-std::vector<char> BasicCalculator::format(double num_value, myTypes::notation notate, int sig_fig)
+std::string BasicCalculator::format(long double num_value, myTypes::notation notate, int sig_fig)
 {
-	// Reduce to Significant Figures
+	// std::vector<char> output;
+	char buffer[50];
 
+	// Notation
+	if (notate == myTypes::Dec)
+	{ // Show without exponent when possible    Format:  nnn.nn
 
-	// Shift to notation
+		if (num_value < (1 * 10 ^ sig_fig)) {
 
+			// print as decimal
+			sprintf(buffer, "%f", num_value);
+			std::string output(buffer);
+			output = output.substr(0, sig_fig + 1);
 
-	return std::vector<char>();
+			return output;
+		}
+		else
+		{
+
+			// print with exponent
+			sprintf(buffer, "%.40e", num_value);
+
+			// limit to sig_fig and replace exponent
+			std::string output(buffer);
+
+			std::string exponential = " x10^";
+			std::string exponentString = output.substr(output.length() - 3, output.length());
+			std::string exponent = std::to_string(std::stoi(exponentString, nullptr));
+
+			output = output.substr(0, sig_fig + 1) + exponential + exponent;
+			return output;
+		}
+
+	}
+	else if (notate == myTypes::Sci)
+	{ // Always show exponent    Format:  n.nnx10^n
+
+		// print with exponent
+		sprintf(buffer, "%.40e", num_value);
+
+		// limit to sig_fig and replace exponent
+		std::string output(buffer);
+
+		std::string exponential = " x10^";
+		std::string exponentString = output.substr(output.length() - 3, output.length());
+		std::string exponent = std::to_string(std::stoi(exponentString, nullptr));
+
+		output = output.substr(0, sig_fig + 1) + exponential + exponent;
+		return output;
+
+	}
+	else if (notate == myTypes::Eng)
+	{ // Always show exponent [where exponent is always a multiple of 3]    Format:  nn.nx10^n
+
+		// print with exponent
+		sprintf(buffer, "%.40e", num_value);
+
+		// limit to sig_fig and replace exponent
+		std::string output(buffer);
+
+		std::string exponential = " x10^";
+		std::string exponentString = output.substr(output.length() - 3, output.length());
+		double sciExponentNum = std::stoi(exponentString, nullptr);
+
+		// calculate to engineering notation
+		int engExponentNum = 3 * floor(sciExponentNum / 3);
+		std::string exponent = std::to_string(engExponentNum);
+
+		// shift to engineering notation
+		int shift = round(3 * fmod(sciExponentNum, 3));
+		output = output.substr(0, 1), output.substr(2, shift - 2), output.substr(1, 1), output.substr(shift - 2, sig_fig + 1);   // current first digit, digits to shift left, dot, everything else
+
+		// concatinate
+		output = output.substr(0, sig_fig + 1) + exponential + exponent;
+		return output;
+
+	}
+	else
+	{ // error
+
+		return std::string ();
+
+	}
 }

@@ -9,10 +9,10 @@ private:
 	// Types
 	struct calcParts {
 		char op;
-		double num;
+		long double num;
 	};
 	struct partsOut {
-		std::vector<char> message;
+		std::string message;
 		std::stack<calcParts> infix;
 	};
 	struct precedence {
@@ -22,23 +22,23 @@ private:
 
 	// Global Values
 	std::stack<calcParts> postfix;
-	double answer;
+	long double answer;
 
 
 public:
 	BasicCalculator();
 	~BasicCalculator();
 	// External
-	std::vector<char> Parse(const std::vector<char> user_input);
-	std::vector<char> Result(myTypes::notation notate, int sig_fig);
+	std::string Parse(const std::string user_input);
+	std::string Result(myTypes::notation notate, int sig_fig);
 
 	// Internal
 	void substitute(std::vector<char> &input_string);
 	partsOut splitParts(std::vector<char> input_string);
-	std::vector<char> postfixConvert(std::stack<calcParts> infix);
+	std::string postfixConvert(std::stack<calcParts> infix);
 	bool isOperator(char character);
 	precedence calcPrecedence(char op);
-	double calculateSingle(double num1, char op, double num2);
-	std::vector<char> format(double num_value, myTypes::notation notate, int sig_fig);
+	long double calculateSingle(long double num1, char op, long double num2);
+	std::string format(long double num_value, myTypes::notation notate, int sig_fig);
 };
 
