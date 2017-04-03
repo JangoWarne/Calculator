@@ -1,6 +1,6 @@
 ----UnitTest_Substitutions----
 
--TestMethod_x_Nominal
+-TestMethod_x_Substitute
 1st test	44 Build Errors
 Fixed .top, .pop, & .push syntax to have ()
 2nd test	28 Build Errors
@@ -16,13 +16,26 @@ Changed AreEqual from comparing vectors
 7th Test	A 64-bit test cannot run in a 32-bit process.
 Changed test proccessor archetecture
 8th Test	Test Successful
--TestMethod_,_Nominal
+-TestMethod_comma_Substitute
 1st test	Test Successful
--TestMethod_divide_Nominal
+-TestMethod_divide_Substitute
 1st test	Test Successful
--TestMethod_multiply_Nominal
+-TestMethod_multiply_Substitute
 1st test	Test Successful
--TestMethod_add_Nominal
+-TestMethod_add_Substitute
 1st test	Test Successful
--TestMethod_subtract_Nominal
+-TestMethod_subtract_Substitute
 1st test	Test Successful
+-TestMethod_divide_isOperator
+1st test	Test Successful
+-TestMethod_multiply_isOperator
+1st test	Test Successful
+-TestMethod_add_isOperator
+1st test	Test Successful
+-TestMethod_subtract_isOperator
+1st test	Test Successful
+-TestMethod_num_isOperator
+1st test	Test Successful
+TestMethod_NomShort_splitParts
+1st test	1 Build Error
+Split unit test comparison so that type is supported

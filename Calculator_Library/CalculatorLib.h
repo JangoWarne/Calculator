@@ -5,7 +5,7 @@
 
 class CalculatorLib
 {
-private:
+public:
 	// Types
 	struct calcParts {
 		char op;
@@ -20,6 +20,7 @@ private:
 		char assoc;
 	};
 
+private:
 	// Global Values
 	std::stack<calcParts> postfix;
 	long double answer;
