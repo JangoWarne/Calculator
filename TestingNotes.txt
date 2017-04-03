@@ -1,0 +1,28 @@
+----UnitTest_Substitutions----
+
+-TestMethod_x_Nominal
+1st test	44 Build Errors
+Fixed .top, .pop, & .push syntax to have ()
+2nd test	28 Build Errors
+Changed .pop use to: .top then .pop
+3rd test	20 Build Errors
+Fixed .size syntax to have ()
+4th test	9 Build Errors
+Added an extra ; to switch statements default case
+5th test	7 Build Errors
+Changed sprintf to the safe sprintf_s
+6th test	2 Build Errors
+Changed AreEqual from comparing vectors
+7th Test	A 64-bit test cannot run in a 32-bit process.
+Changed test proccessor archetecture
+8th Test	Test Successful
+-TestMethod_,_Nominal
+1st test	Test Successful
+-TestMethod_divide_Nominal
+1st test	Test Successful
+-TestMethod_multiply_Nominal
+1st test	Test Successful
+-TestMethod_add_Nominal
+1st test	Test Successful
+-TestMethod_subtract_Nominal
+1st test	Test Successful
