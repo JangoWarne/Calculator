@@ -3,17 +3,43 @@
 #include "../hFiles/myTypes.h"
 #include <vector>
 
+#include "iostream"
+
 class CalculatorLib
 {
 public:
 	// Types
-	struct calcParts {
+	struct calcPart {
 		char op;
 		long double num;
+
+		bool operator==(calcPart& other) const
+		{
+			std::cout << op << " " << other.op << "   " << num << " " << other.num;
+			return (op == other.op) && (num == other.num);
+		}
 	};
 	struct partsOut {
 		std::string message;
-		std::stack<calcParts> infix;
+		std::stack<calcPart> infix;
+
+		bool operator==(partsOut& other) const
+		{
+			bool result2(true);
+			CalculatorLib::calcPart copyTop;						// stack elements
+			std::stack<calcPart> otherCopy = other.infix;			// copy of "other" stack
+			std::stack<calcPart> infixCopy = infix;					// copy of "infix" stack
+			for (int i = 0; i < otherCopy.size() && i < infixCopy.size(); i++) {
+				if (otherCopy.top() == infixCopy.top()) {
+					otherCopy.pop();	infixCopy.pop();			// pop stacks
+				} else {
+					otherCopy.pop();	infixCopy.pop();			// pop stacks
+					result2 = false;								// stacks are not equal
+					break;
+				}
+			}
+			return (message == other.message) && result2;
+		}
 	};
 	struct precedence {
 		int value;
@@ -22,7 +48,7 @@ public:
 
 private:
 	// Global Values
-	std::stack<calcParts> postfix;
+	std::stack<calcPart> postfix;
 	long double answer;
 
 
@@ -36,7 +62,7 @@ public:
 	// Internal
 	void substitute(std::vector<char> &input_string);
 	partsOut splitParts(std::vector<char> input_string);
-	std::string postfixConvert(std::stack<calcParts> infix);
+	std::string postfixConvert(std::stack<calcPart> infix);
 	bool isOperator(char character);
 	precedence calcPrecedence(char op);
 	long double calculateSingle(long double num1, char op, long double num2);

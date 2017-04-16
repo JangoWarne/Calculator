@@ -42,9 +42,9 @@ std::string CalculatorLib::Parse(const std::string user_input)
 
 std::string CalculatorLib::Result(myTypes::notation notate, int sig_fig)
 {
-	std::stack<calcParts> sequence = postfix;
+	std::stack<calcPart> sequence = postfix;
 	std::stack<long double> numStack;
-	calcParts item;
+	calcPart item;
 	long double num1;
 	long double num2;
 	long double result;
@@ -109,12 +109,13 @@ void CalculatorLib::substitute(std::vector<char> &input_string)
 CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string)
 {
 	bool first = true;					//first valid character?
-	std::stack<calcParts> infix;		//infix stack
-	CalculatorLib::calcParts part;	//part to go on stack
+	std::stack<calcPart> infix;			//infix stack
+	CalculatorLib::calcPart part;		//part to go on stack
 	std::stringstream snum;				//characters of number being built
 	snum.precision(15);					//ensure precision when converting to double
-	long double dnum;						//double complete number
+	long double dnum;					//double complete number
 	std::stringstream message;			//error message
+	char last = 'n';					//Last Type
 	
 
 	// read char by char & check if first value is operator
@@ -129,6 +130,7 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 		}
 		else if (std::isdigit(character) || character == '.') {
 			// If part of number build number
+			last = 'n';
 
 			if (first == true) { // Mark if first
 				first = false;
@@ -139,8 +141,9 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 			snum << character;
 
 		}
-		else if (isOperator(character)) {
+		else if (isOperator(character) && (last!='c')) {
 			// If operator output to stack
+			last = 'c';
 
 			if (first == true) { // Number = previous answer if first
 				dnum = answer;
@@ -148,6 +151,9 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 			}
 			else {
 				snum >> dnum;  //convert number to long double
+
+				snum.str(std::string());	// clear stringstream
+				snum.clear();
 			}
 			
 			// Push built number and operator to stack
@@ -161,7 +167,8 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 
 		}
 		else {
-			// If other
+			// If other input or repeated operator
+			last = '~';
 
 			// find error subset start
 			int start;
@@ -189,13 +196,30 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 
 
 			// add problem subset
-			for (int x = start; x = end; x++) {
+			for (int x = start; x < end+1; x++) {
 				message << input_string[x];
 			}
 
 			break;
 		}
 	}
+
+	// If last element was not an error
+	if (last != '~')
+	{
+		// Push incomplete number to stack
+		if (first == true) { // Number = previous answer if first
+			dnum = answer;
+			first = false;
+		}
+		else {
+			snum >> dnum;  //convert number to long double
+		}
+		part.op = 'n';
+		part.num = dnum;
+		infix.push(part);  // Push number
+	}
+
 
 	// type cast error message
 	std::string messageString = message.str();
@@ -209,13 +233,13 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 }
 
 
-std::string CalculatorLib::postfixConvert(std::stack<calcParts> infix)
+std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 {
 	// create conversion stacks
-	std::stack<calcParts> numstack;
-	std::stack<calcParts> opstack;
-	CalculatorLib::calcParts opnew;	//new part to go on stack
-	CalculatorLib::calcParts optop;	//part on top of operator stack
+	std::stack<calcPart> numstack;
+	std::stack<calcPart> opstack;
+	CalculatorLib::calcPart opnew;	//new part to go on stack
+	CalculatorLib::calcPart optop;	//part on top of operator stack
 	bool correct;
 	std::stringstream message;			//error message
 

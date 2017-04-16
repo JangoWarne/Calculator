@@ -38,4 +38,25 @@ Changed test proccessor archetecture
 1st test	Test Successful
 TestMethod_NomShort_splitParts
 1st test	1 Build Error
-Split unit test comparison so that type is supported
+Added comparison to structures
+2nd test	Test Failed
+Added missing push incomplete number to stack at end of splitparts
+3rd test	Test Failed
+Added missing clearing of stringstream after each number
+4th test	Test Successful
+TestMethod_NomLong_splitParts
+1st test	Test Successful
+TestMethod_ErrorRepeat_splitParts
+1st test	Test Failed
+Added check of repeated characters
+2nd test	Build Failed
+Added tracking of last character type
+3rd test	Stuck in infinite loop
+Fixed For loop check
+4th test	Test Failed
+Changed push incomplete number to stack at end of splitparts to only occur when last cas was not error
+4th test	Test Successful
+TestMethod_ErrorOther_splitParts
+1st test	Test Successful
+
+~~~~~~Need to add using Answer to tests & ensure tests cover all code cases (Maybe also not running loops)
