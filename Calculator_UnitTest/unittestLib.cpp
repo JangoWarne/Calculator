@@ -102,7 +102,7 @@ namespace Calculator_UnitTest
 	TEST_CLASS(UnitTest_splitParts)
 	{
 	public:
-		
+
 		TEST_METHOD(TestMethod_NomShort_splitParts)
 		{
 			CalculatorLib Test;
@@ -125,7 +125,7 @@ namespace Calculator_UnitTest
 		TEST_METHOD(TestMethod_NomLong_splitParts)
 		{
 			CalculatorLib Test;
-			std::string str("6.447 +2.01525/ 9.8-4.000 ");	//Input
+			std::string str("6.447 +201.525/ 9.8-4.000 ");	//Input
 			std::vector<char> string(str.begin(), str.end());
 			CalculatorLib::partsOut parts;	//Output
 			parts.message = "";
@@ -137,7 +137,7 @@ namespace Calculator_UnitTest
 			item.num = 0;
 			parts.infix.push(item);
 			item.op = 'n';
-			item.num = 2.01525;
+			item.num = 201.525;
 			parts.infix.push(item);
 			item.op = '/';
 			item.num = 0;
@@ -199,4 +199,154 @@ namespace Calculator_UnitTest
 		}
 
 	};
+	TEST_CLASS(UnitTest_postfixConvert)
+	{
+	public:
+
+		TEST_METHOD(TestMethod_NomShort_postfixConvert)
+		{
+			CalculatorLib Test;
+			CalculatorLib::partsOut parts;	//Input
+			parts.message = "";
+			CalculatorLib::calcPart item;
+			item.op = 'n';
+			item.num = 7;
+			parts.infix.push(item);
+			item.op = '*';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 8;
+			parts.infix.push(item);
+			CalculatorLib::partsOut partsout;	//Output
+			parts.message = "";
+			item.op = '*';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 7;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 8;
+			parts.infix.push(item);
+			std::string error = Test.postfixConvert(parts.infix);
+			parts.infix = Test.readPostfix();
+			Assert::IsTrue((parts == partsout) && error.empty());
+		}
+		TEST_METHOD(TestMethod_NomPrece_postfixConvert)
+		{
+			CalculatorLib Test;
+			CalculatorLib::partsOut parts;	//Input
+			parts.message = "";
+			CalculatorLib::calcPart item;
+			item.op = 'n';
+			item.num = 6.447;
+			parts.infix.push(item);
+			item.op = '+';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 201.525;
+			parts.infix.push(item);
+			item.op = '/';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 9.8;
+			parts.infix.push(item);
+			item.op = '-';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 4;
+			parts.infix.push(item);
+			CalculatorLib::partsOut partsout;	//Output
+			partsout.message = "";
+			item.op = '-';
+			item.num = 0;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 4;
+			partsout.infix.push(item);
+			item.op = '+';
+			item.num = 0;
+			partsout.infix.push(item);
+			item.op = '/';
+			item.num = 0;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 9.8;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 201.525;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 6.447;
+			partsout.infix.push(item);
+			std::string error = Test.postfixConvert(parts.infix);
+			parts.infix = Test.readPostfix();
+			Assert::IsTrue((parts == partsout) && error.empty());
+		}
+		TEST_METHOD(TestMethod_NomAssoc_postfixConvert)
+		{
+			CalculatorLib Test;
+			CalculatorLib::partsOut parts;	//Input
+			parts.message = "";
+			CalculatorLib::calcPart item;
+			item.op = 'n';
+			item.num = 6.447;
+			parts.infix.push(item);
+			item.op = '/';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 201.525;
+			parts.infix.push(item);
+			item.op = '*';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 9.8;
+			parts.infix.push(item);
+			item.op = '/';
+			item.num = 0;
+			parts.infix.push(item);
+			item.op = 'n';
+			item.num = 4;
+			parts.infix.push(item);
+			CalculatorLib::partsOut partsout;	//Output
+			partsout.message = "";
+			item.op = '*';
+			item.num = 0;
+			partsout.infix.push(item);
+			item.op = '/';
+			item.num = 0;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 4;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 9.8;
+			partsout.infix.push(item);
+			item.op = '/';
+			item.num = 0;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 201.525;
+			partsout.infix.push(item);
+			item.op = 'n';
+			item.num = 6.447;
+			partsout.infix.push(item);
+			std::string error = Test.postfixConvert(parts.infix);
+			parts.infix = Test.readPostfix();
+			Assert::IsTrue((parts == partsout) && error.empty());
+		}
+
+	};
+	// calcPrecedence
+	// Parse
+
+	// calcSingle
+	// Format
+	// Result
 }

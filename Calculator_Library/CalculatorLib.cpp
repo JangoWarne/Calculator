@@ -32,7 +32,7 @@ std::string CalculatorLib::Parse(const std::string user_input)
 
 	errorMessage = output.message;
 
-	if (!errorMessage.empty()) {
+	if (errorMessage.empty()) {
 		// Format into postfix and store in global
 		errorMessage = postfixConvert(output.infix);
 	}
@@ -238,19 +238,31 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 	// create conversion stacks
 	std::stack<calcPart> numstack;
 	std::stack<calcPart> opstack;
-	CalculatorLib::calcPart opnew;	//new part to go on stack
-	CalculatorLib::calcPart optop;	//part on top of operator stack
+	CalculatorLib::calcPart opnew;		//new part to go on stack
+	CalculatorLib::calcPart optop;		//part on top of operator stack
 	bool correct;
 	std::stringstream message;			//error message
 
+	// Size of stack
+	int iterations = infix.size();
+
+	// Flip infix stack
+	opstack = infix;
+	for (int i = 0; i < iterations; i++) {
+
+		// pop top element and push to infix stack
+		infix.push(opstack.top());	opstack.pop();
+
+	}
+
 
 	// convert infix to postfix notation
-	for (int i = 0; i < infix.size(); i++) {
+	for (int i = 0; i < iterations; i++) {
 		
 		// pop top element
 		opnew = infix.top();	infix.pop();
 
-		if (opnew.op = 'n') {		// if new part is a number
+		if (opnew.op == 'n') {		// if new part is a number
 
 			// push number to number stack
 			numstack.push(opnew);
@@ -267,12 +279,15 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 					// push operator to operator stack
 					opstack.push(opnew);
 
+					// Step complete
+					correct = true;
+
 				}
 				else {
 
 					// Find presedence
 					precedence opnewImport = calcPrecedence(opnew.op);
-					optop = infix.top();
+					optop = opstack.top();
 					precedence optopImport = calcPrecedence(optop.op);
 
 					// Compare precedence values
@@ -298,18 +313,15 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 							// If the operator ontop of the stack does not have right-associativity
 
 							// push top of operator stack to number stack
-							numstack.push(opstack.top());	opstack.pop();
+							numstack.push(opstack.top());	opstack.pop();	//Lower Assiciativity
 						}
 						else if ((opnewImport.assoc == 'R') || (opnewImport.assoc == 'A')) {
 							// If the new operator has right-associativity...
 							// or...
 							// If the new operator is associative
 
-							// push operator to operator stack
-							opstack.push(opnew);
-
-							// Step complete
-							correct = true;
+							// push top of operator stack to number stack
+							numstack.push(opstack.top());	opstack.pop();	//Same Assiciativity
 						}
 						else if ((opnewImport.assoc == 'N') && (opnew.op != optop.op)) {
 							// If the new operator has non-associativity...
@@ -317,7 +329,7 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 							// If the operator ontop of the stack is not identicle
 
 							// push operator to operator stack
-							opstack.push(opnew);
+							opstack.push(opnew);							//Higher Associativity
 
 							// Step complete
 							correct = true;
@@ -334,13 +346,30 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 			}
 		}
 	}
-	
+
 	// type cast error message
 	std::string errorMessage = message.str();
 
+
+	// If there was no error
+	if (errorMessage == "") {
+		// Size of stack
+		iterations = opstack.size();
+
+		// Empty opstack to numstack
+		for (int i = 0; i < iterations; i++) {
+
+			// pop top element and push to numstack stack
+			numstack.push(opstack.top());	opstack.pop();
+
+		}
+	}
+
+
 	// output to postfix stack
-	for (int i = 0; i < numstack.size(); i++) {
-		postfix.push(numstack.top());	opstack.pop();
+	iterations = numstack.size();
+	for (int i = 0; i < iterations; i++) {
+		postfix.push(numstack.top());	numstack.pop();
 	}
 
 	return errorMessage;
@@ -355,14 +384,18 @@ bool CalculatorLib::isOperator(char character)
 	switch (character) {
 		case '/':
 			valid = true;
+			break;
 		case '*':
 			valid = true;
+			break;
 		case '+':
 			valid = true;
+			break;
 		case '-':
 			valid = true;
+			break;
 		default :
-			;
+			break;
 	}
 
 	return valid;
@@ -378,18 +411,23 @@ CalculatorLib::precedence CalculatorLib::calcPrecedence(char op)
 	case '/':
 		pres.value = 2;
 		pres.assoc = 'L';
+		break;
 	case '*':
 		pres.value = 2;
 		pres.assoc = 'A';
+		break;
 	case '+':
 		pres.value = 1;
 		pres.assoc = 'A';
+		break;
 	case '-':
 		pres.value = 1;
 		pres.assoc = 'L';
+		break;
 	default:
 		pres.value = 0;
 		pres.assoc = 'A';
+		break;
 	}
 
 	return pres;
@@ -506,4 +544,10 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 		return std::string ();
 
 	}
+}
+
+
+std::stack<CalculatorLib::calcPart> CalculatorLib::readPostfix()
+{
+	return postfix;			// Return postfix value
 }

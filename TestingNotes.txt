@@ -55,8 +55,36 @@ Added tracking of last character type
 Fixed For loop check
 4th test	Test Failed
 Changed push incomplete number to stack at end of splitparts to only occur when last cas was not error
-4th test	Test Successful
+5th test	Test Successful
 TestMethod_ErrorOther_splitParts
 1st test	Test Successful
+TestMethod_NomShort_postfixConvert
+Unable to create compare struct stack
+Compared using premade struct compare
+1st test	Test Successful
+TestMethod_NomPrece_postfixConvert
+1st test	Test Failed - Debug empty before pop
+Fixed comparison from = to == for op type
+2nd test	Test Failed
+Changed iterations to be fixed before conversion due to changing measured size
+3rd test	Test Failed
+Added missing breaks to switch statements
+4th test	Test Failed
+Fix stack used for precedence comparison
+5th test	Test Failed
+Fixed R & A associativity
+6th test	Test Failed
+Infix stack is upside down - Flipped stack at start of function
+Added empty opstack to numstack at end of conversion
+7th test	Test Failed - Debug empty before pop
+Fist stack being popped at end
+8th test	Test Failed
+Realised methode does not output to resut to infix stack instead private postfix stack is used
+Added readPostfix method
+Flipped expected unit test results
+9th test	Test Succeded
+TestMethod_NomAssoc_postfixConvert
+1st test	Test Succeded
+
 
 ~~~~~~Need to add using Answer to tests & ensure tests cover all code cases (Maybe also not running loops)

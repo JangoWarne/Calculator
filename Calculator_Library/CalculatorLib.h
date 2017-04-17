@@ -19,6 +19,7 @@ public:
 			return (op == other.op) && (num == other.num);
 		}
 	};
+
 	struct partsOut {
 		std::string message;
 		std::stack<calcPart> infix;
@@ -41,6 +42,7 @@ public:
 			return (message == other.message) && result2;
 		}
 	};
+
 	struct precedence {
 		int value;
 		char assoc;
@@ -67,5 +69,6 @@ public:
 	precedence calcPrecedence(char op);
 	long double calculateSingle(long double num1, char op, long double num2);
 	std::string format(long double num_value, myTypes::notation notate, int sig_fig);
+	std::stack<calcPart> readPostfix();
 };
 
