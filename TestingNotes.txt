@@ -82,9 +82,40 @@ Fist stack being popped at end
 Realised methode does not output to resut to infix stack instead private postfix stack is used
 Added readPostfix method
 Flipped expected unit test results
-9th test	Test Succeded
+9th test	Test Successful
 TestMethod_NomAssoc_postfixConvert
-1st test	Test Succeded
-
+1st test	Test Successful
+TestMethod_divide_calcPrecedence
+1st test	Test Successful
+TestMethod_multiply_calcPrecedence
+1st test	Test Successful
+TestMethod_add_calcPrecedence
+1st test	Test Successful
+TestMethod_subtract_calcPrecedence
+1st test	Test Successful
+TestMethod_other_calcPrecedence
+1st test	Test Successful
+TestMethod_NomShort_Parse
+1st test	Test Successful
+TestMethod_NomLong_Parse
+1st test	Test Successful
+TestMethod_divideShort_calculateSingle
+1st test	Test Successful
+TestMethod_divideLong_calculateSingle
+1st test	Test Successful
+TestMethod_multiplyShort_calculateSingle
+1st test	Test Successful
+TestMethod_multiplyLong_calculateSingle
+1st test	Test Successful
+TestMethod_addShort_calculateSingle
+1st test	Test Successful
+TestMethod_addLong_calculateSingle
+1st test	Test Successful
+TestMethod_subtractShort_calculateSingle
+1st test	Test Successful
+TestMethod_subtractLong_calculateSingle
+1st test	Test Successful
+TestMethod_errorOp_calculateSingle
+1st test	Test Successful
 
 ~~~~~~Need to add using Answer to tests & ensure tests cover all code cases (Maybe also not running loops)

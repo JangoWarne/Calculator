@@ -15,7 +15,6 @@ public:
 
 		bool operator==(calcPart& other) const
 		{
-			std::cout << op << " " << other.op << "   " << num << " " << other.num;
 			return (op == other.op) && (num == other.num);
 		}
 	};
@@ -46,6 +45,11 @@ public:
 	struct precedence {
 		int value;
 		char assoc;
+
+		bool operator==(precedence& other) const
+		{
+			return (value == other.value) && (assoc == other.assoc);
+		}
 	};
 
 private:

@@ -18,55 +18,24 @@ float divide_single(int num1, int num2);
 int main()
 {
 	CalculatorLib Test;
-	CalculatorLib::partsOut parts;	//Input
-	parts.message = "";
+	std::string stringIn("7*8");	//Input
+	std::string stringOut("");	//Error Output
+	CalculatorLib::partsOut parts;	//Parsed Data Target
 	CalculatorLib::calcPart item;
-	item.op = 'n';
-	item.num = 6.447;
-	parts.infix.push(item);
-	item.op = '+';
+	parts.message = "";
+	item.op = '*';
 	item.num = 0;
 	parts.infix.push(item);
 	item.op = 'n';
-	item.num = 201.525;
-	parts.infix.push(item);
-	item.op = '/';
-	item.num = 0;
+	item.num = 7;
 	parts.infix.push(item);
 	item.op = 'n';
-	item.num = 9.8;
+	item.num = 8;
 	parts.infix.push(item);
-	item.op = '-';
-	item.num = 0;
-	parts.infix.push(item);
-	item.op = 'n';
-	item.num = 4;
-	parts.infix.push(item);
-	CalculatorLib::partsOut partsout;	//Output
+	std::string error = Test.Parse(stringIn);
+	CalculatorLib::partsOut partsout;	//Parsed Data Output
 	partsout.message = "";
-	item.op = '-';
-	item.num = 0;
-	partsout.infix.push(item);
-	item.op = 'n';
-	item.num = 4;
-	partsout.infix.push(item);
-	item.op = '+';
-	item.num = 0;
-	partsout.infix.push(item);
-	item.op = '/';
-	item.num = 0;
-	partsout.infix.push(item);
-	item.op = 'n';
-	item.num = 9.8;
-	partsout.infix.push(item);
-	item.op = 'n';
-	item.num = 201.525;
-	partsout.infix.push(item);
-	item.op = 'n';
-	item.num = 6.447;
-	partsout.infix.push(item);
-	std::string error = Test.postfixConvert(parts.infix);
-	parts.infix = Test.readPostfix();
+	partsout.infix = Test.readPostfix();
 	bool i = ((parts == partsout) && error.empty());
 	//char continue_str = 'Y';
 	//char input_string[3];
