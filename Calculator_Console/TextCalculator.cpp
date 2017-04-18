@@ -18,25 +18,11 @@ float divide_single(int num1, int num2);
 int main()
 {
 	CalculatorLib Test;
-	std::string stringIn("7*8");	//Input
-	std::string stringOut("");	//Error Output
-	CalculatorLib::partsOut parts;	//Parsed Data Target
-	CalculatorLib::calcPart item;
-	parts.message = "";
-	item.op = '*';
-	item.num = 0;
-	parts.infix.push(item);
-	item.op = 'n';
-	item.num = 7;
-	parts.infix.push(item);
-	item.op = 'n';
-	item.num = 8;
-	parts.infix.push(item);
-	std::string error = Test.Parse(stringIn);
-	CalculatorLib::partsOut partsout;	//Parsed Data Output
-	partsout.message = "";
-	partsout.infix = Test.readPostfix();
-	bool i = ((parts == partsout) && error.empty());
+	long double num = 49982463158725442.735;	//Input
+	myTypes::notation format = myTypes::Dec;
+	int sig_fig = 0;
+	std::string expected = "4.998246315 x10^16";	//Output
+	std::string output = Test.format(num, format, sig_fig);
 	//char continue_str = 'Y';
 	//char input_string[3];
 

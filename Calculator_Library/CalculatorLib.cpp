@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <math.h>       /* log10 */
 
 
 CalculatorLib::CalculatorLib()
@@ -461,80 +462,166 @@ long double CalculatorLib::calculateSingle(long double num1, char op, long doubl
 
 std::string CalculatorLib::format(long double num_value, myTypes::notation notate, int sig_fig)
 {
-	// std::vector<char> output;
-	char buffer[50];
+	// sig_fig empty?
+	if (sig_fig == 0) {
+		sig_fig = 10;
+	}
+
+	// Create Variables & Constants
+	char outBuffer[256];
+	std::string exponential = " x10^";
+	std::size_t found;
+
+	// Calculate base 10 exponent of number
+	int exponent = log10(abs(num_value));
+	exponent = ceil(exponent);
 
 	// Notation
 	if (notate == myTypes::Dec)
-	{ // Show without exponent when possible    Format:  nnn.nn
+	{ // Show without exponent when possible
 
-		if (num_value < (1 * 10 ^ sig_fig)) {
+		if (exponent < sig_fig)
+		{ // Show without exponent    Format:  nn.nn
 
 			// print as decimal
-			sprintf_s(buffer, 1000, "%f", num_value);
-			std::string output(buffer);
-			output = output.substr(0, sig_fig + 1);
+			sprintf_s(outBuffer, 256, "%.*f", (sig_fig - exponent), num_value);
+			std::string output(outBuffer);
+
+			// remove trailing 0s
+			std::size_t found = output.find('.');
+			if (found != std::string::npos) {
+				while (output.substr(output.length() - 1) == "0") {
+					output = output.substr(0 ,output.length() - 1);		// remove 0
+				}
+				if ((output.substr(output.length() - 1) == ".")) {
+					output = output.substr(0, output.length() - 1);		// remove .
+				}
+			}
 
 			return output;
 		}
 		else
-		{
+		{ // Show exponent    Format:  n.nn x10^n
 
 			// print with exponent
-			sprintf_s(buffer, 1000, "%.40e", num_value);
+			sprintf_s(outBuffer, 256, "%.*e", (sig_fig - 1), num_value);
+			std::string output(outBuffer);
 
-			// limit to sig_fig and replace exponent
-			std::string output(buffer);
+			// remove exponent
+			while (output.substr(output.length() - 1) != "e") {
+				output = output.substr(0, output.length() - 1);		// remove exponent value
+			}
+			output = output.substr(0, output.length() - 1);		// remove e
 
-			std::string exponential = " x10^";
-			std::string exponentString = output.substr(output.length() - 3, output.length());
-			std::string exponent = std::to_string(std::stoi(exponentString, nullptr));
+			// remove trailing 0s
+			found = output.find('.');
+			if (found != std::string::npos) {
+				while (output.substr(output.length() - 1) == "0") {
+					output = output.substr(0, output.length() - 1);		// remove 0
+				}
+				if ((output.substr(output.length() - 1) == ".")) {
+					output = output.substr(0, output.length() - 1);		// remove .
+				}
+			}
+			
+			// add new exponent
+			output = output + exponential + std::to_string(exponent);
 
-			output = output.substr(0, sig_fig + 1) + exponential + exponent;
 			return output;
 		}
 
 	}
 	else if (notate == myTypes::Sci)
-	{ // Always show exponent    Format:  n.nnx10^n
+	{ // Always show exponent    Format:  n.nn x10^n
 
 		// print with exponent
-		sprintf_s(buffer, 1000, "%.40e", num_value);
+		sprintf_s(outBuffer, 256, "%.*e", (sig_fig - 1), num_value);
+		std::string output(outBuffer);
 
-		// limit to sig_fig and replace exponent
-		std::string output(buffer);
+		// remove exponent
+		while (output.substr(output.length() - 1) != "e") {
+			output = output.substr(0, output.length() - 1);		// remove exponent value
+		}
+		output = output.substr(0, output.length() - 1);		// remove e
 
-		std::string exponential = " x10^";
-		std::string exponentString = output.substr(output.length() - 3, output.length());
-		std::string exponent = std::to_string(std::stoi(exponentString, nullptr));
+		// remove trailing 0s
+		found = output.find('.');
+		if (found != std::string::npos) {
+			while (output.substr(output.length() - 1) == "0") {
+				output = output.substr(0, output.length() - 1);		// remove 0
+			}
+			if ((output.substr(output.length() - 1) == ".")) {
+				output = output.substr(0, output.length() - 1);		// remove .
+			}
+		}
 
-		output = output.substr(0, sig_fig + 1) + exponential + exponent;
+		// add new exponent
+		output = output + exponential + std::to_string(exponent);
+
 		return output;
 
 	}
 	else if (notate == myTypes::Eng)
-	{ // Always show exponent [where exponent is always a multiple of 3]    Format:  nn.nx10^n
+	{ // Always show exponent [where exponent is always a multiple of 3]    Format:  nn.nn x10^n
 
 		// print with exponent
-		sprintf_s(buffer, 1000, "%.40e", num_value);
+		sprintf_s(outBuffer, 256, "%.*e", (sig_fig - 1), num_value);
+		std::string output(outBuffer);
 
-		// limit to sig_fig and replace exponent
-		std::string output(buffer);
+		// remove exponent
+		while (output.substr(output.length() - 1) != "e") {
+			output = output.substr(0, output.length() - 1);		// remove exponent value
+		}
+		output = output.substr(0, output.length() - 1);		// remove e
 
-		std::string exponential = " x10^";
-		std::string exponentString = output.substr(output.length() - 3, output.length());
-		double sciExponentNum = std::stoi(exponentString, nullptr);
+		// remove trailing 0s
+		found = output.find('.');
+		if (found != std::string::npos) {
+			while (output.substr(output.length() - 1) == "0") {
+				output = output.substr(0, output.length() - 1);		// remove 0
+			}
+			if ((output.substr(output.length() - 1) == ".")) {
+				output = output.substr(0, output.length() - 1);		// remove .
+			}
+		}
 
 		// calculate to engineering notation
-		int engExponentNum = 3 * floor(sciExponentNum / 3);
-		std::string exponent = std::to_string(engExponentNum);
+		int engExponentNum = 3 * floor(exponent / 3);
+		int remainingShift = exponent - engExponentNum;
 
 		// shift to engineering notation
-		int shift = round(3 * fmod(sciExponentNum, 3));
-		output = output.substr(0, 1), output.substr(2, shift - 2), output.substr(1, 1), output.substr(shift - 2, sig_fig + 1);   // current first digit, digits to shift left, dot, everything else
+		std::size_t position = output.find('.');
+		if (position != std::string::npos)
+		{ // if string contains a decimal pont
+			// shift until complete or end of string
+			std::string beforeDot = output.substr(0, position) + output.substr(position +1, remainingShift);		// characters before new decimal point
 
-		// concatinate
-		output = output.substr(0, sig_fig + 1) + exponential + exponent;
+			if (position + remainingShift > output.length())
+			{ // if end of string was reached before finishing
+				output = beforeDot;
+				remainingShift = position + remainingShift - output.length();
+			}
+			else if (position + remainingShift == output.length())
+			{ // if end of string was reached exactly
+				output = beforeDot;
+				remainingShift = 0;
+			}
+			else
+			{ // concatinate remainder of string
+				output = beforeDot + "." + output.substr(position + 1 + remainingShift);
+				remainingShift = 0;
+			}
+
+		}
+
+		// pad any remaining shift with 0s
+		for (remainingShift; remainingShift > 0; remainingShift -1) {
+			output = output + "0";								// pad with 0
+		}
+
+		// add new exponent
+		output = output + exponential + std::to_string(engExponentNum);
+
 		return output;
 
 	}

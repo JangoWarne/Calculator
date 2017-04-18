@@ -117,5 +117,35 @@ TestMethod_subtractLong_calculateSingle
 1st test	Test Successful
 TestMethod_errorOp_calculateSingle
 1st test	Test Successful
+TestMethod_decShort_format
+1st test	Test Failed - Debugging: Run-Time Check Failure #2 - Stack around the variable 'exponential' was corrupted.
+Moved exponential string outside of if statement
+2nd test	Test Failed - Debug Assertion Failed.
+Fixed buffer length and sprintf_s lengths to match
+3rd test	Test Failed
+Changed to different variable precision method & added removal of trailing zeros
+4th test	Test Successful
+TestMethod_decLimited_format
+1st test	Test Failed
+Changed to different variable exponent method
+2nd test	Test Successful
+TestMethod_sciShort_format
+1st test	Test Failed
+Fixed using exponent where sig_fig should be used for precision
+2nd test	Test Successful
+TestMethod_sciLimited_format
+1st test	Test Successful
+TestMethod_engShort_format
+1st test	Test Failed
+Fixed use of substr and engeneering notation shift
+2nd test	Test Successful
+TestMethod_engLimited_format
+1st test	Test Successful
+TestMethod_SigfigAndRound_format
+1st test	Test Successful
+TestMethod_NomShort_Result
+1st test	Test Successful
+TestMethod_NomLong_Result
+1st test	Test Successful
 
 ~~~~~~Need to add using Answer to tests & ensure tests cover all code cases (Maybe also not running loops)
