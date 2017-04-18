@@ -1,0 +1,151 @@
+----UnitTest_Substitutions----
+
+-TestMethod_x_Substitute
+1st test	44 Build Errors
+Fixed .top, .pop, & .push syntax to have ()
+2nd test	28 Build Errors
+Changed .pop use to: .top then .pop
+3rd test	20 Build Errors
+Fixed .size syntax to have ()
+4th test	9 Build Errors
+Added an extra ; to switch statements default case
+5th test	7 Build Errors
+Changed sprintf to the safe sprintf_s
+6th test	2 Build Errors
+Changed AreEqual from comparing vectors
+7th Test	A 64-bit test cannot run in a 32-bit process.
+Changed test proccessor archetecture
+8th Test	Test Successful
+-TestMethod_comma_Substitute
+1st test	Test Successful
+-TestMethod_divide_Substitute
+1st test	Test Successful
+-TestMethod_multiply_Substitute
+1st test	Test Successful
+-TestMethod_add_Substitute
+1st test	Test Successful
+-TestMethod_subtract_Substitute
+1st test	Test Successful
+-TestMethod_divide_isOperator
+1st test	Test Successful
+-TestMethod_multiply_isOperator
+1st test	Test Successful
+-TestMethod_add_isOperator
+1st test	Test Successful
+-TestMethod_subtract_isOperator
+1st test	Test Successful
+-TestMethod_num_isOperator
+1st test	Test Successful
+TestMethod_NomShort_splitParts
+1st test	1 Build Error
+Added comparison to structures
+2nd test	Test Failed
+Added missing push incomplete number to stack at end of splitparts
+3rd test	Test Failed
+Added missing clearing of stringstream after each number
+4th test	Test Successful
+TestMethod_NomLong_splitParts
+1st test	Test Successful
+TestMethod_ErrorRepeat_splitParts
+1st test	Test Failed
+Added check of repeated characters
+2nd test	Build Failed
+Added tracking of last character type
+3rd test	Stuck in infinite loop
+Fixed For loop check
+4th test	Test Failed
+Changed push incomplete number to stack at end of splitparts to only occur when last cas was not error
+5th test	Test Successful
+TestMethod_ErrorOther_splitParts
+1st test	Test Successful
+TestMethod_NomShort_postfixConvert
+Unable to create compare struct stack
+Compared using premade struct compare
+1st test	Test Successful
+TestMethod_NomPrece_postfixConvert
+1st test	Test Failed - Debug empty before pop
+Fixed comparison from = to == for op type
+2nd test	Test Failed
+Changed iterations to be fixed before conversion due to changing measured size
+3rd test	Test Failed
+Added missing breaks to switch statements
+4th test	Test Failed
+Fix stack used for precedence comparison
+5th test	Test Failed
+Fixed R & A associativity
+6th test	Test Failed
+Infix stack is upside down - Flipped stack at start of function
+Added empty opstack to numstack at end of conversion
+7th test	Test Failed - Debug empty before pop
+Fist stack being popped at end
+8th test	Test Failed
+Realised methode does not output to resut to infix stack instead private postfix stack is used
+Added readPostfix method
+Flipped expected unit test results
+9th test	Test Successful
+TestMethod_NomAssoc_postfixConvert
+1st test	Test Successful
+TestMethod_divide_calcPrecedence
+1st test	Test Successful
+TestMethod_multiply_calcPrecedence
+1st test	Test Successful
+TestMethod_add_calcPrecedence
+1st test	Test Successful
+TestMethod_subtract_calcPrecedence
+1st test	Test Successful
+TestMethod_other_calcPrecedence
+1st test	Test Successful
+TestMethod_NomShort_Parse
+1st test	Test Successful
+TestMethod_NomLong_Parse
+1st test	Test Successful
+TestMethod_divideShort_calculateSingle
+1st test	Test Successful
+TestMethod_divideLong_calculateSingle
+1st test	Test Successful
+TestMethod_multiplyShort_calculateSingle
+1st test	Test Successful
+TestMethod_multiplyLong_calculateSingle
+1st test	Test Successful
+TestMethod_addShort_calculateSingle
+1st test	Test Successful
+TestMethod_addLong_calculateSingle
+1st test	Test Successful
+TestMethod_subtractShort_calculateSingle
+1st test	Test Successful
+TestMethod_subtractLong_calculateSingle
+1st test	Test Successful
+TestMethod_errorOp_calculateSingle
+1st test	Test Successful
+TestMethod_decShort_format
+1st test	Test Failed - Debugging: Run-Time Check Failure #2 - Stack around the variable 'exponential' was corrupted.
+Moved exponential string outside of if statement
+2nd test	Test Failed - Debug Assertion Failed.
+Fixed buffer length and sprintf_s lengths to match
+3rd test	Test Failed
+Changed to different variable precision method & added removal of trailing zeros
+4th test	Test Successful
+TestMethod_decLimited_format
+1st test	Test Failed
+Changed to different variable exponent method
+2nd test	Test Successful
+TestMethod_sciShort_format
+1st test	Test Failed
+Fixed using exponent where sig_fig should be used for precision
+2nd test	Test Successful
+TestMethod_sciLimited_format
+1st test	Test Successful
+TestMethod_engShort_format
+1st test	Test Failed
+Fixed use of substr and engeneering notation shift
+2nd test	Test Successful
+TestMethod_engLimited_format
+1st test	Test Successful
+TestMethod_SigfigAndRound_format
+1st test	Test Successful
+TestMethod_NomShort_Result
+1st test	Test Successful
+TestMethod_NomLong_Result
+1st test	Test Successful
+
+~~~~~~Need to add using Answer to tests & ensure tests cover all code cases (Maybe also not running loops)
