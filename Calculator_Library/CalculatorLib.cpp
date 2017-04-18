@@ -34,6 +34,11 @@ std::string CalculatorLib::Parse(const std::string user_input)
 	errorMessage = output.message;
 
 	if (errorMessage.empty()) {
+		// Clear postfix stack
+		while (!postfix.empty()) {
+			postfix.pop();
+		}
+
 		// Format into postfix and store in global
 		errorMessage = postfixConvert(output.infix);
 	}
@@ -78,7 +83,13 @@ std::string CalculatorLib::Result(myTypes::notation notate, int sig_fig)
 	
 	// Format Output
 	std::string output;
-	output = format(numStack.top(), notate, sig_fig);
+	if (numStack.size() == 1) {
+		answer = numStack.top();
+		output = format(answer, notate, sig_fig);
+	}
+	else {
+		output = "Not enough operators to resolve calculation";
+	}
 
 	return output;
 }
@@ -205,8 +216,10 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 		}
 	}
 
-	// If last element was not an error
-	if (last != '~')
+
+	// If last element was not an error and if (first or snum is not empty)
+	std::string testString1 = snum.str();
+	if ((last != '~') && (first || !testString1.empty()))
 	{
 		// Push incomplete number to stack
 		if (first == true) { // Number = previous answer if first
@@ -220,6 +233,28 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 		part.num = dnum;
 		infix.push(part);  // Push number
 	}
+
+
+	// If no error check last type was a number
+	std::string testString2 = message.str();
+	if (testString2.empty()) {
+		// not number?
+		if (infix.top().op != 'n') {
+			message << "Invalid sequence: Does not end in a number";
+		}
+	}
+
+
+	// Flip infix stack
+	std::stack<calcPart> copy;
+	int iterations = infix.size();
+	for (int i = 0; i < iterations; i++) {
+
+		// pop top element and push to infix stack
+		copy.push(infix.top());	infix.pop();
+
+	}
+	infix = copy;
 
 
 	// type cast error message
@@ -246,15 +281,6 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 
 	// Size of stack
 	int iterations = infix.size();
-
-	// Flip infix stack
-	opstack = infix;
-	for (int i = 0; i < iterations; i++) {
-
-		// pop top element and push to infix stack
-		infix.push(opstack.top());	opstack.pop();
-
-	}
 
 
 	// convert infix to postfix notation
