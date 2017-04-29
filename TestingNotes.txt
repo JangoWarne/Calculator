@@ -148,4 +148,15 @@ TestMethod_NomShort_Result
 TestMethod_NomLong_Result
 1st test	Test Successful
 
+
+
+----Version2----
+
+
+
+TestMethod_engSmallNum_format
+1st test	Test Failed
+Fixed exponent calculation for numbers with a negative log10
+2nd Test	Test Successful
+
 ~~~~~~Need to add using Answer to tests & ensure tests cover all code cases (Maybe also not running loops)

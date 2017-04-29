@@ -204,10 +204,13 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 
 
 			// Output warning message
-			message << "Invalid input \"" << character << "\" in: ";
+			message << "Invalid input \"" << character << "\" at: ";
 
 
 			// add problem subset
+			if (end > input_string.size() - 1) {
+				end = input_string.size() - 1;
+			}
 			for (int x = start; x < end+1; x++) {
 				message << input_string[x];
 			}
@@ -499,8 +502,13 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 	std::size_t found;
 
 	// Calculate base 10 exponent of number
-	int exponent = log10(abs(num_value));
-	exponent = ceil(exponent);
+	float exponent = log10(abs(num_value));
+	if (num_value == 0) {
+		exponent = 0;
+	}
+	else {
+		exponent = floorf(exponent);
+	}
 
 	// Notation
 	if (notate == myTypes::Dec)
@@ -510,7 +518,8 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 		{ // Show without exponent    Format:  nn.nn
 
 			// print as decimal
-			sprintf_s(outBuffer, 256, "%.*f", (sig_fig - exponent), num_value);
+			int precision = sig_fig - exponent;
+			sprintf_s(outBuffer, 256, "%.*f", precision, num_value);
 			std::string output(outBuffer);
 
 			// remove trailing 0s
@@ -551,7 +560,8 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 			}
 			
 			// add new exponent
-			output = output + exponential + std::to_string(exponent);
+			int exponentInt = exponent;
+			output = output + exponential + std::to_string(exponentInt);
 
 			return output;
 		}
@@ -582,7 +592,8 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 		}
 
 		// add new exponent
-		output = output + exponential + std::to_string(exponent);
+		int exponentInt = exponent;
+		output = output + exponential + std::to_string(exponentInt);
 
 		return output;
 
@@ -612,7 +623,15 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 		}
 
 		// calculate to engineering notation
-		int engExponentNum = 3 * floor(exponent / 3);
+		int engExponentNum;
+		if (exponent >= 0) {
+			// if positive exponent
+			engExponentNum = 3 * floorf(exponent / 3);
+		}
+		else {
+			// if negative exponent
+			engExponentNum = -3 * ceilf(abs(exponent) / 3);
+		}
 		int remainingShift = exponent - engExponentNum;
 
 		// shift to engineering notation
