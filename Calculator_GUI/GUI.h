@@ -14,6 +14,7 @@ namespace Calculator_GUI {
 	using namespace System::Drawing;
 
 	CalculatorLib Calculate;
+	myTypes::notation SelectedType = myTypes::Dec;
 
 	/// <summary>
 	/// Summary for GUI
@@ -78,9 +79,13 @@ namespace Calculator_GUI {
 
 	private: System::Windows::Forms::Button^  button_ans;
 	private: System::Windows::Forms::Button^  button_power;
-	private: System::Windows::Forms::TextBox^  interpretBox;
+
 	private: System::Windows::Forms::TextBox^  inputBox;
 	private: System::Windows::Forms::Button^  button_invert;
+	private: System::Windows::Forms::Button^  button_Dec;
+	private: System::Windows::Forms::Button^  button_Sci;
+	private: System::Windows::Forms::Button^  button_Eng;
+	private: System::Windows::Forms::Label^  label1;
 
 
 
@@ -122,9 +127,12 @@ namespace Calculator_GUI {
 			this->button_tan = (gcnew System::Windows::Forms::Button());
 			this->button_ans = (gcnew System::Windows::Forms::Button());
 			this->button_power = (gcnew System::Windows::Forms::Button());
-			this->interpretBox = (gcnew System::Windows::Forms::TextBox());
 			this->inputBox = (gcnew System::Windows::Forms::TextBox());
 			this->button_invert = (gcnew System::Windows::Forms::Button());
+			this->button_Dec = (gcnew System::Windows::Forms::Button());
+			this->button_Sci = (gcnew System::Windows::Forms::Button());
+			this->button_Eng = (gcnew System::Windows::Forms::Button());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// button_7
@@ -141,10 +149,10 @@ namespace Calculator_GUI {
 			// 
 			this->resultBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->resultBox->Location = System::Drawing::Point(26, 91);
+			this->resultBox->Location = System::Drawing::Point(87, 91);
 			this->resultBox->Name = L"resultBox";
 			this->resultBox->ReadOnly = true;
-			this->resultBox->Size = System::Drawing::Size(238, 27);
+			this->resultBox->Size = System::Drawing::Size(177, 27);
 			this->resultBox->TabIndex = 2;
 			this->resultBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -375,15 +383,6 @@ namespace Calculator_GUI {
 			this->button_power->Text = L"x^y";
 			this->button_power->UseVisualStyleBackColor = true;
 			// 
-			// interpretBox
-			// 
-			this->interpretBox->Location = System::Drawing::Point(26, 70);
-			this->interpretBox->Name = L"interpretBox";
-			this->interpretBox->ReadOnly = true;
-			this->interpretBox->Size = System::Drawing::Size(238, 22);
-			this->interpretBox->TabIndex = 2;
-			this->interpretBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			// 
 			// inputBox
 			// 
 			this->inputBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
@@ -393,7 +392,7 @@ namespace Calculator_GUI {
 			this->inputBox->Size = System::Drawing::Size(238, 27);
 			this->inputBox->TabIndex = 0;
 			this->inputBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			this->inputBox->Click += gcnew System::EventHandler(this, &GUI::inputBox_Click);
+			this->inputBox->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &GUI::inputBox_KeyPress);
 			// 
 			// button_invert
 			// 
@@ -405,11 +404,64 @@ namespace Calculator_GUI {
 			this->button_invert->Text = L"1/x";
 			this->button_invert->UseVisualStyleBackColor = true;
 			// 
+			// button_Dec
+			// 
+			this->button_Dec->BackColor = System::Drawing::SystemColors::ControlDark;
+			this->button_Dec->FlatAppearance->BorderColor = System::Drawing::Color::Black;
+			this->button_Dec->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->button_Dec->Location = System::Drawing::Point(26, 91);
+			this->button_Dec->Name = L"button_Dec";
+			this->button_Dec->Size = System::Drawing::Size(23, 27);
+			this->button_Dec->TabIndex = 25;
+			this->button_Dec->Text = L"D";
+			this->button_Dec->UseVisualStyleBackColor = false;
+			this->button_Dec->Click += gcnew System::EventHandler(this, &GUI::button_Dec_Click);
+			// 
+			// button_Sci
+			// 
+			this->button_Sci->BackColor = System::Drawing::SystemColors::Control;
+			this->button_Sci->FlatAppearance->BorderColor = System::Drawing::Color::Black;
+			this->button_Sci->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->button_Sci->Location = System::Drawing::Point(46, 91);
+			this->button_Sci->Name = L"button_Sci";
+			this->button_Sci->Size = System::Drawing::Size(23, 27);
+			this->button_Sci->TabIndex = 25;
+			this->button_Sci->Text = L"S";
+			this->button_Sci->UseVisualStyleBackColor = false;
+			this->button_Sci->Click += gcnew System::EventHandler(this, &GUI::button_Sci_Click);
+			// 
+			// button_Eng
+			// 
+			this->button_Eng->BackColor = System::Drawing::SystemColors::Control;
+			this->button_Eng->FlatAppearance->BorderColor = System::Drawing::Color::Black;
+			this->button_Eng->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->button_Eng->Location = System::Drawing::Point(65, 91);
+			this->button_Eng->Name = L"button_Eng";
+			this->button_Eng->Size = System::Drawing::Size(23, 27);
+			this->button_Eng->TabIndex = 26;
+			this->button_Eng->Text = L"E";
+			this->button_Eng->UseVisualStyleBackColor = false;
+			this->button_Eng->Click += gcnew System::EventHandler(this, &GUI::button_Eng_Click);
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Enabled = false;
+			this->label1->Location = System::Drawing::Point(27, 71);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(61, 17);
+			this->label1->TabIndex = 27;
+			this->label1->Text = L"Notation";
+			// 
 			// GUI
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(404, 303);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->button_Eng);
+			this->Controls->Add(this->button_Sci);
+			this->Controls->Add(this->button_Dec);
 			this->Controls->Add(this->inputBox);
 			this->Controls->Add(this->button_power);
 			this->Controls->Add(this->button_invert);
@@ -434,7 +486,6 @@ namespace Calculator_GUI {
 			this->Controls->Add(this->button_4);
 			this->Controls->Add(this->button_9);
 			this->Controls->Add(this->button_8);
-			this->Controls->Add(this->interpretBox);
 			this->Controls->Add(this->resultBox);
 			this->Controls->Add(this->button_7);
 			this->Name = L"GUI";
@@ -444,119 +495,310 @@ namespace Calculator_GUI {
 
 		}
 #pragma endregion
-	private: System::Void button_equals_Click(System::Object^  sender, System::EventArgs^  e) {
-		std::string input_string;
-		std::string output_string;
+		private: System::Void button_equals_Click(System::Object^  sender, System::EventArgs^  e) {
+			std::string input_string;
+			std::string output_string;
 
-		// get user input
-		System::String ^ sysTextIn = this->inputBox->Text;
-		input_string = msclr::interop::marshal_as<std::string>(sysTextIn);
-
-
-		// Parse input
-		output_string = "";
-		output_string = Calculate.Parse(input_string);
+			// get user input
+			System::String ^ sysTextIn = this->inputBox->Text;
+			input_string = msclr::interop::marshal_as<std::string>(sysTextIn);
 
 
-		// calculate result
-		if (output_string.empty()) {
-			output_string = Calculate.Result(myTypes::Dec, 10);
+			// Parse input
+			output_string = "";
+			output_string = Calculate.Parse(input_string);
+
+
+			// calculate result
+			if (output_string.empty()) {
+				output_string = Calculate.Result(SelectedType, 10);
+			}
+
+
+			// output result
+			this->resultBox->Text = gcnew String(output_string.c_str());
+
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
 		}
 
+		private: System::Void inputBox_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+			if ((e->KeyChar == 13) || (e->KeyChar == '='))
+			{
+				// Run button_equals_Click
+				this->button_equals->PerformClick();
+				// Tell system event has already been handled
+				e->Handled = true;
+			}
+			else {
+				// Let system peform normal input
+			}
+		}
 
-		// output result
-		this->resultBox->Text = gcnew String(output_string.c_str());
-	}
+		private: System::Void button_Dec_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Change formatting to Decimal
+			SelectedType = myTypes::Dec;
+			this->button_Dec->BackColor = System::Drawing::SystemColors::ControlDark;
+			this->button_Sci->BackColor = System::Drawing::SystemColors::Control;
+			this->button_Eng->BackColor = System::Drawing::SystemColors::Control;
 
-	private: System::Void inputBox_Click(System::Object^  sender, System::EventArgs^  e) {
-	}
+			// Run button_equals_Click
+			this->button_equals->PerformClick();
 
-	private: System::Void button_0_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 0
-		this->inputBox->Text = this->inputBox->Text + "0";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_1_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 1
-		this->inputBox->Text = this->inputBox->Text + "1";
-	}
+		private: System::Void button_Sci_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Change formatting to Scientific
+			SelectedType = myTypes::Sci;
+			this->button_Dec->BackColor = System::Drawing::SystemColors::Control;
+			this->button_Sci->BackColor = System::Drawing::SystemColors::ControlDark;
+			this->button_Eng->BackColor = System::Drawing::SystemColors::Control;
 
-	private: System::Void button_2_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 2
-		this->inputBox->Text = this->inputBox->Text + "2";
-	}
+			// Run button_equals_Click
+			this->button_equals->PerformClick();
 
-	private: System::Void button_3_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 3
-		this->inputBox->Text = this->inputBox->Text + "3";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_4_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 4
-		this->inputBox->Text = this->inputBox->Text + "4";
-	}
+		private: System::Void button_Eng_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Change formatting to Engeneering
+			SelectedType = myTypes::Eng;
+			this->button_Dec->BackColor = System::Drawing::SystemColors::Control;
+			this->button_Sci->BackColor = System::Drawing::SystemColors::Control;
+			this->button_Eng->BackColor = System::Drawing::SystemColors::ControlDark;
 
-	private: System::Void button_5_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 5
-		this->inputBox->Text = this->inputBox->Text + "5";
-	}
+			// Run button_equals_Click
+			this->button_equals->PerformClick();
 
-	private: System::Void button_6_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 6
-		this->inputBox->Text = this->inputBox->Text + "6";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_7_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 7
-		this->inputBox->Text = this->inputBox->Text + "7";
-	}
+		private: System::Void button_0_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 0
+			this->inputBox->Text = this->inputBox->Text + "0";
 
-	private: System::Void button_8_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 8
-		this->inputBox->Text = this->inputBox->Text + "8";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_9_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter 9
-		this->inputBox->Text = this->inputBox->Text + "9";
-	}
+		private: System::Void button_1_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 1
+			this->inputBox->Text = this->inputBox->Text + "1";
 
-	private: System::Void button_dot_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter decimal point
-		this->inputBox->Text = this->inputBox->Text + ".";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_add_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter +
-		this->inputBox->Text = this->inputBox->Text + "+";
-	}
+		private: System::Void button_2_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 2
+			this->inputBox->Text = this->inputBox->Text + "2";
 
-	private: System::Void button_minus_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter -
-		this->inputBox->Text = this->inputBox->Text + "-";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_multiply_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter *
-		this->inputBox->Text = this->inputBox->Text + "*";
-	}
+		private: System::Void button_3_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 3
+			this->inputBox->Text = this->inputBox->Text + "3";
 
-	private: System::Void button_divide_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Enter /
-		this->inputBox->Text = this->inputBox->Text + "/";
-	}
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
 
-	private: System::Void button_delete_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Delete last character
-		System::String ^ sysTextIn = this->inputBox->Text;
-		std::string stdText = msclr::interop::marshal_as<std::string>(sysTextIn);
-		stdText = stdText.substr(0, stdText.size() - 1);
-		this->inputBox->Text = gcnew String(stdText.c_str());
-	}
+		private: System::Void button_4_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 4
+			this->inputBox->Text = this->inputBox->Text + "4";
 
-	private: System::Void button_clear_Click(System::Object^  sender, System::EventArgs^  e) {
-		// Clear Input
-		this->inputBox->Text = "";
-	}
-};
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_5_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 5
+			this->inputBox->Text = this->inputBox->Text + "5";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_6_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 6
+			this->inputBox->Text = this->inputBox->Text + "6";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_7_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 7
+			this->inputBox->Text = this->inputBox->Text + "7";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_8_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 8
+			this->inputBox->Text = this->inputBox->Text + "8";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_9_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter 9
+			this->inputBox->Text = this->inputBox->Text + "9";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_dot_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter decimal point
+			this->inputBox->Text = this->inputBox->Text + ".";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_add_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter +
+			this->inputBox->Text = this->inputBox->Text + "+";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_minus_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter -
+			this->inputBox->Text = this->inputBox->Text + "-";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_multiply_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter *
+			this->inputBox->Text = this->inputBox->Text + "*";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_divide_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Enter /
+			this->inputBox->Text = this->inputBox->Text + "/";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_delete_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Delete last character
+			System::String ^ sysTextIn = this->inputBox->Text;
+			std::string stdText = msclr::interop::marshal_as<std::string>(sysTextIn);
+			stdText = stdText.substr(0, stdText.size() - 1);
+			this->inputBox->Text = gcnew String(stdText.c_str());
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+
+		private: System::Void button_clear_Click(System::Object^  sender, System::EventArgs^  e) {
+			// Clear Input
+			this->inputBox->Text = "";
+
+			// Reselect inputBox without highlight
+			this->inputBox->Select();
+			this->inputBox->DeselectAll();
+			// Move caret to end of input
+			this->inputBox->SelectionLength = 0;
+			this->inputBox->SelectionStart = this->inputBox->Text->Length;
+		}
+	};
 }

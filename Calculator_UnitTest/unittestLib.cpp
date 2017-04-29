@@ -161,7 +161,7 @@ namespace Calculator_UnitTest
 			std::string str("6.447 +2.01525// 9.8-4.000 ");	//Input
 			std::vector<char> string(str.begin(), str.end());
 			CalculatorLib::partsOut parts;	//Output
-			parts.message = "Invalid input \"/\" in: 1525// 9.8-";
+			parts.message = "Invalid input \"/\" at: 1525// 9.8-";
 			CalculatorLib::calcPart item;
 			item.op = '/';
 			item.num = 0;
@@ -184,7 +184,7 @@ namespace Calculator_UnitTest
 			std::string str("6.447 +2.01?525/ 9.8-4.000 ");	//Input
 			std::vector<char> string(str.begin(), str.end());
 			CalculatorLib::partsOut parts;	//Output
-			parts.message = "Invalid input \"?\" in: +2.01?525/ ";
+			parts.message = "Invalid input \"?\" at: +2.01?525/ ";
 			CalculatorLib::calcPart item;
 			item.op = '+';
 			item.num = 0;
@@ -613,6 +613,15 @@ namespace Calculator_UnitTest
 			myTypes::notation format = myTypes::Eng;
 			int sig_fig = 8;
 			std::string expected = "49.982463 x10^15";	//Output
+			Assert::IsTrue(expected == Test.format(num, format, sig_fig));
+		}
+		TEST_METHOD(TestMethod_engSmallNum_format)
+		{
+			CalculatorLib Test;
+			long double num = 0.0008888888888889;	//Input
+			myTypes::notation format = myTypes::Eng;
+			int sig_fig = 10;
+			std::string expected = "888.8888889 x10^-6";	//Output
 			Assert::IsTrue(expected == Test.format(num, format, sig_fig));
 		}
 		TEST_METHOD(TestMethod_SigfigAndRound_format)
