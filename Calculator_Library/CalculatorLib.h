@@ -70,9 +70,12 @@ public:
 	partsOut splitParts(std::vector<char> input_string);
 	std::string postfixConvert(std::stack<calcPart> infix);
 	bool isOperator(char character);
+	bool isExtendedOperator(char firstChar, char secondChar, char thirdChar);
 	precedence calcPrecedence(char op);
 	long double calculateSingle(long double num1, char op, long double num2);
 	std::string format(long double num_value, myTypes::notation notate, int sig_fig);
 	std::stack<calcPart> readPostfix();
+	long double getAnswer();
+	void setAnswer(long double value);
 };
 
