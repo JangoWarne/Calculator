@@ -60,15 +60,26 @@ std::string CalculatorLib::Result(myTypes::notation notate, int sig_fig)
 		// read and pop next item
 		item = sequence.top();	sequence.pop();
 
-		// Is number?
+		// operator or number?
 		if (item.op == 'n') {
-
+			// If number
 			// Push to number stack
 			numStack.push(item.num);
 
 		}
+		else if (item.op == 's' || item.op == 'c' || item.op == 't') {
+			// Single Input operators
+			// Calculate Result
+			num2 = numStack.top();	numStack.pop();
+
+			result = calculateSingle(0, item.op, num2);
+
+			// Push result to number stack
+			numStack.push(result);
+
+		}
 		else {
-			
+			// Multiple Input operators
 			// Calculate Result
 			num2 = numStack.top();	numStack.pop();
 			num1 = numStack.top();	numStack.pop();
@@ -84,8 +95,13 @@ std::string CalculatorLib::Result(myTypes::notation notate, int sig_fig)
 	// Format Output
 	std::string output;
 	if (numStack.size() == 1) {
-		answer = numStack.top();
-		output = format(answer, notate, sig_fig);
+		if (!isinf(numStack.top())) {
+			answer = numStack.top();
+			output = format(answer, notate, sig_fig);
+		}
+		else {
+			output = "Answer exceeds calculation limit";
+		}
 	}
 	else {
 		output = "Not enough operators to resolve calculation";
@@ -102,6 +118,12 @@ void CalculatorLib::substitute(std::vector<char> &input_string)
 	{
 		// seporate value
 		char character = input_string[i];
+
+		// Convert to lower case
+		if (isalpha(character)) {
+			character = tolower(character);
+			input_string[i] = character;
+		}
 
 		// substitute values
 		switch(character) {
@@ -128,13 +150,25 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 	long double dnum;					//double complete number
 	std::stringstream message;			//error message
 	char last = 'n';					//Last Type
+	std::stringstream errorString;		//Message string for error message
+	int i;								//For loop index
+	bool extendedCheck;					//boolean for isExtendedOperator check
+	bool trailingNum;					//boolean for extended operator trailing number check
 	
 
 	// read char by char & check if first value is operator
-	for (int i = 0; i < input_string.size(); i++)
+	for (i = 0; i < input_string.size(); i++)
 	{
 		// seporate value
 		char character = input_string[i];
+
+		// if long enough perform isExtendedOperator check
+		if (input_string.size() > i + 2) {
+			extendedCheck = isExtendedOperator(character, input_string[i + 1], input_string[i + 2]);
+		}
+		else {
+			extendedCheck = false;
+		}
 
 		// split values
 		if (std::isspace(character)) {
@@ -153,11 +187,106 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 			snum << character;
 
 		}
-		else if (isOperator(character) && (last!='c')) {
-			// If operator output to stack
-			last = 'c';
+		else if (extendedCheck) {
+			// If extended operator: check for adjacent numbers and output to stack
 
-			if (first == true) { // Number = previous answer if first
+			// if long enough check for trailing number
+			if (input_string.size() > i + 3) {
+				trailingNum = false;
+				if (input_string.size() >= i + 6) {
+					trailingNum = isExtendedOperator(input_string[i + 3], input_string[i + 4], input_string[i + 5]);
+				}
+				if (!trailingNum) {
+					trailingNum = isdigit(input_string[i + 3]);
+				};
+			}
+			else {
+				trailingNum = false;
+			}
+
+			// If last character was a number
+			if (last == 'n') {
+				if (first == true) {
+					// If this is the first char
+					first = false;
+				}
+				else {
+					snum >> dnum;  //convert number to long double
+
+					snum.str(std::string());	// clear stringstream
+					snum.clear();
+
+
+					// Push built number and operator to stack
+					part.op = 'n';
+					part.num = dnum;
+					infix.push(part);  // Push number
+
+
+					// Push multiply operator to stack eg: 2cos30  ==  2*cos30
+					part.op = '*';
+					part.num = 0;
+					infix.push(part);  // Push operator
+				}
+			}
+
+			// extended operator type
+			switch (character) {
+			case 'a':
+				// Ans
+				// check for no trailing num
+				if (!trailingNum) {
+					// If ans
+					snum << answer;
+					last = 'n';
+
+					//shift loop index
+					i = i + 2;
+				}
+				else {
+					// If it has a trailing number
+					last = '~';
+					errorString << "Trailing number after \"" << character << input_string[i + 1] << input_string[i + 2];
+				}
+				break;
+			case 's':
+			case 'c':
+			case 't':
+				// Sin || Cos || Tan
+				// check for trailing num
+				if (trailingNum) {
+					// If a valid operator
+					last = 'o';
+					
+					part.op = character;
+					part.num = 0;
+					infix.push(part);  // Push operator
+
+					//shift loop index
+					i = i + 2;
+				}
+				else {
+					// If missing trailing number
+					last = '~';
+					errorString << "Missing number after \"" << character << input_string[i + 1] << input_string[i + 2];
+				}
+				break;
+			default :
+				// this case cannot happen due to isExtendedOperator check
+				break;
+			}
+
+			// if error occured
+			if (last == '~') {
+				break;
+			}
+		}
+		else if (isOperator(character) && (last != 'o')) {
+			// If operator output to stack
+			last = 'o';
+
+			if (first == true) {
+				// If this is the first char
 				dnum = answer;
 				first = false;
 			}
@@ -167,7 +296,7 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 				snum.str(std::string());	// clear stringstream
 				snum.clear();
 			}
-			
+
 			// Push built number and operator to stack
 			part.op = 'n';
 			part.num = dnum;
@@ -181,51 +310,21 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 		else {
 			// If other input or repeated operator
 			last = '~';
-
-			// find error subset start
-			int start;
-
-			if ((i - 5) < 0) {
-				start = 0;
-			}
-			else {
-				start = i - 5;
-			}
-
-			// find error subset end
-			int end;
-
-			if ((i + 5) > input_string.size()) {
-				end = input_string.size();
-			}
-			else {
-				end = i + 5;
-			}
-
-
-			// Output warning message
-			message << "Invalid input \"" << character << "\" at: ";
-
-
-			// add problem subset
-			if (end > input_string.size() - 1) {
-				end = input_string.size() - 1;
-			}
-			for (int x = start; x < end+1; x++) {
-				message << input_string[x];
-			}
+			errorString << "Invalid input \"" << character;
 
 			break;
 		}
 	}
 
-
-	// If last element was not an error and if (first or snum is not empty)
+	
+	// errors and incomplete numbers
 	std::string testString1 = snum.str();
 	if ((last != '~') && (first || !testString1.empty()))
 	{
+		// If last element was not an error and if (first or snum is not empty)
 		// Push incomplete number to stack
-		if (first == true) { // Number = previous answer if first
+		if (first == true) {
+			// If this is the first char
 			dnum = answer;
 			first = false;
 		}
@@ -235,6 +334,41 @@ CalculatorLib::partsOut CalculatorLib::splitParts(std::vector<char> input_string
 		part.op = 'n';
 		part.num = dnum;
 		infix.push(part);  // Push number
+	}
+	else if (last = '~') {
+		// if last element was an error
+		// find error subset start
+		int start;
+
+		if ((i - 5) < 0) {
+			start = 0;
+		}
+		else {
+			start = i - 5;
+		}
+
+		// find error subset end
+		int end;
+
+		if ((i + 5) > input_string.size()) {
+			end = input_string.size();
+		}
+		else {
+			end = i + 5;
+		}
+
+
+		// Output warning message
+		message << errorString.str() << "\" at: ";
+
+
+		// add problem subset
+		if (end > input_string.size() - 1) {
+			end = input_string.size() - 1;
+		}
+		for (int x = start; x < end + 1; x++) {
+			message << input_string[x];
+		}
 	}
 
 
@@ -343,15 +477,22 @@ std::string CalculatorLib::postfixConvert(std::stack<calcPart> infix)
 							// If the operator ontop of the stack does not have right-associativity
 
 							// push top of operator stack to number stack
-							numstack.push(opstack.top());	opstack.pop();	//Lower Assiciativity
+							numstack.push(opstack.top());	opstack.pop();	//Left Assiciativity
 						}
-						else if ((opnewImport.assoc == 'R') || (opnewImport.assoc == 'A')) {
-							// If the new operator has right-associativity...
-							// or...
+						else if (opnewImport.assoc == 'A') {
 							// If the new operator is associative
 
 							// push top of operator stack to number stack
 							numstack.push(opstack.top());	opstack.pop();	//Same Assiciativity
+						}
+						else if (opnewImport.assoc == 'R') {
+							// If the new operator has right-associativity
+
+							// push operator to operator stack
+							opstack.push(opnew);							//Right Associativity
+
+							// Step complete
+							correct = true;
 						}
 						else if ((opnewImport.assoc == 'N') && (opnew.op != optop.op)) {
 							// If the new operator has non-associativity...
@@ -412,6 +553,9 @@ bool CalculatorLib::isOperator(char character)
 
 	// check character
 	switch (character) {
+		case '^':
+			valid = true;
+			break;
 		case '/':
 			valid = true;
 			break;
@@ -424,8 +568,37 @@ bool CalculatorLib::isOperator(char character)
 		case '-':
 			valid = true;
 			break;
-		default :
+		default:
 			break;
+	}
+
+	return valid;
+}
+
+
+bool CalculatorLib::isExtendedOperator(char firstChar, char secondChar, char thirdChar)
+{
+	bool valid = false;
+
+	// check characters
+	if (firstChar == 'a' && secondChar == 'n' && thirdChar == 's') {
+		// Ans
+		valid = true;
+	}
+	else if (firstChar == 's' && secondChar == 'i' && thirdChar == 'n') {
+		// Sin
+		valid = true;
+	}
+	else if (firstChar == 'c' && secondChar == 'o' && thirdChar == 's') {
+		// Cos
+		valid = true;
+	}
+	else if (firstChar == 't' && secondChar == 'a' && thirdChar == 'n') {
+		// Tan
+		valid = true;
+	}
+	else {
+		// not an extended operator
 	}
 
 	return valid;
@@ -438,26 +611,42 @@ CalculatorLib::precedence CalculatorLib::calcPrecedence(char op)
 
 	// check character
 	switch (op) {
-	case '/':
-		pres.value = 2;
-		pres.assoc = 'L';
-		break;
-	case '*':
-		pres.value = 2;
-		pres.assoc = 'A';
-		break;
-	case '+':
-		pres.value = 1;
-		pres.assoc = 'A';
-		break;
-	case '-':
-		pres.value = 1;
-		pres.assoc = 'L';
-		break;
-	default:
-		pres.value = 0;
-		pres.assoc = 'A';
-		break;
+		case 's':
+			pres.value = 4;
+			pres.assoc = 'R';
+			break;
+		case 'c':
+			pres.value = 4;
+			pres.assoc = 'R';
+			break;
+		case 't':
+			pres.value = 4;
+			pres.assoc = 'R';
+			break;
+		case '^':
+			pres.value = 3;
+			pres.assoc = 'R';
+			break;
+		case '/':
+			pres.value = 2;
+			pres.assoc = 'L';
+			break;
+		case '*':
+			pres.value = 2;
+			pres.assoc = 'A';
+			break;
+		case '+':
+			pres.value = 1;
+			pres.assoc = 'A';
+			break;
+		case '-':
+			pres.value = 1;
+			pres.assoc = 'L';
+			break;
+		default:
+			pres.value = 0;
+			pres.assoc = 'A';
+			break;
 	}
 
 	return pres;
@@ -470,7 +659,19 @@ long double CalculatorLib::calculateSingle(long double num1, char op, long doubl
 
 	// Calculate based on operator
 	switch(op) {
-		case '/' : // Divide
+		case 's': // Sin(x)
+			result = sin(num2);
+			break;
+		case 'c': // Cos(x)
+			result = cos(num2);
+			break;
+		case 't': // Tan(x)
+			result = tan(num2);
+			break;
+		case '^': // Power
+			result = pow(num1, num2);
+			break;
+		case '/': // Divide
 			result = num1 / num2;
 			break;
 		case '*' : // Multiply
@@ -641,13 +842,13 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 			// shift until complete or end of string
 			std::string beforeDot = output.substr(0, position) + output.substr(position +1, remainingShift);		// characters before new decimal point
 
-			if (position + remainingShift > output.length())
+			if (position + 1 + remainingShift > output.length())
 			{ // if end of string was reached before finishing
 				output = beforeDot;
 				remainingShift = position + remainingShift - output.length();
 			}
-			else if (position + remainingShift == output.length())
-			{ // if end of string was reached exactly
+			else if (position + 1 + remainingShift == output.length())
+			{ // if string is exact length including dot
 				output = beforeDot;
 				remainingShift = 0;
 			}
@@ -660,7 +861,7 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 		}
 
 		// pad any remaining shift with 0s
-		for (remainingShift; remainingShift > 0; remainingShift -1) {
+		for (remainingShift; remainingShift > 0; remainingShift--) {
 			output = output + "0";								// pad with 0
 		}
 
@@ -682,4 +883,14 @@ std::string CalculatorLib::format(long double num_value, myTypes::notation notat
 std::stack<CalculatorLib::calcPart> CalculatorLib::readPostfix()
 {
 	return postfix;			// Return postfix value
+}
+
+long double CalculatorLib::getAnswer()
+{
+	return answer;			// Return value of answer
+}
+
+void CalculatorLib::setAnswer(long double value)
+{
+	answer = value;			// Set answer in memory to value
 }
